@@ -2,10 +2,12 @@ package no.sandramoen.soottheloot.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 
 import no.sandramoen.soottheloot.actors.Bag;
@@ -22,11 +24,13 @@ public class LevelScreen extends BaseScreen {
     private Bag bag;
     private Array<Coin> coins;
 
+    private Label lootCollectedLabel;
+
     @Override
     public void initialize() {
         BaseActor.setWorldBounds(100, 100);
         new Ground(mainstage);
-        bag = new Bag(80f, -35f, mainstage);
+        bag = new Bag(70f, -35f, mainstage);
         coins = new Array();
 
         BaseActor coinSpawner = new BaseActor(0, 0, mainstage);
@@ -34,15 +38,22 @@ public class LevelScreen extends BaseScreen {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        coins.add(new Coin(-80, 100, mainstage, -00, -40));
+                        coins.add(new Coin(-80, 100, mainstage, 0, -40));
+                        coins.add(new Coin(-80, 100, mainstage, -10, -35));
+                        coins.add(new Coin(-80, 100, mainstage, -20, -30));
+                        coins.add(new Coin(-80, 100, mainstage, -30, -32));
+                        coins.add(new Coin(-80, 100, mainstage, -40, -33));
+                        coins.add(new Coin(-80, 100, mainstage, -50, -35));
                     }
                 }),
                 Actions.delay(4f)
         )));
 
         soots = new Array();
-        for (int i = 0; i < 4; i++)
-            soots.add(new Soot(80 + 5 * i, -35, mainstage));
+        for (int i = 0; i < 8; i++)
+            soots.add(new Soot(80 + 2 * i, -35, mainstage));
+
+        uiSetup();
     }
 
     @Override
@@ -131,6 +142,7 @@ public class LevelScreen extends BaseScreen {
                     Actions.moveTo(bag.getX() + bag.getWidth() / 8, bag.getY() + bag.getHeight() / 4, .2f)
             )));
             bag.addLoot(coin.weight);
+            lootCollectedLabel.setText("Loot: " + bag.getLoot());
         }
     }
 
@@ -139,7 +151,7 @@ public class LevelScreen extends BaseScreen {
             if (soots.get(i).id == soots.get(j).id)
                 continue;
 
-            if (soots.get(i).isCarrying() && !soots.get(j).isCarrying() && !soots.get(j).isDragging &&
+            if (soots.get(i).isCarrying() && !soots.get(j).isCarrying() && !soots.get(j).isDragging && soots.get(j).canCarry() &&
                     soots.get(i).isWithinDistance(40, soots.get(j)) && soots.get(i).getX() < soots.get(j).getX()
             ) {
                 final Coin coin = soots.get(i).getRidOfCoin();
@@ -158,9 +170,9 @@ public class LevelScreen extends BaseScreen {
                         Actions.run(new Runnable() {
                             @Override
                             public void run() {
-                                if (!soots.get(finalJ).isDragging)
+                                if (!soots.get(finalJ).isDragging && soots.get(finalJ).canCarry())
                                     soots.get(finalJ).carry(coin);
-                                else if (soots.get(finalJ).isDragging) {
+                                else {
                                     coin.clearActions();
                                     coin.addAction(Actions.forever(Actions.rotateBy(-720f, 1f)));
                                     coin.addAction(Actions.sequence(
@@ -178,5 +190,11 @@ public class LevelScreen extends BaseScreen {
                 ));
             }
         }
+    }
+
+    private void uiSetup() {
+        lootCollectedLabel = new Label("Loot: 0", BaseGame.label36Style);
+        lootCollectedLabel.setColor(Color.BLUE);
+        uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f);
     }
 }

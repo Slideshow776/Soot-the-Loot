@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
@@ -87,8 +88,16 @@ public class Soot extends BaseActor {
     public Coin getRidOfCoin() {
         if (isCarrying()) {
             carrying--;
-            setAnimation(runningAnimation);
-            setSize(8, 8);
+            addAction(Actions.sequence(
+                    Actions.delay(.25f),
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            setAnimation(runningAnimation);
+                            setSize(8, 8);
+                        }
+                    })
+            ));
             return coins.pop();
         }
         return null;
