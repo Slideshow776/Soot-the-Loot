@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 
@@ -35,7 +34,7 @@ public class LevelScreen extends BaseScreen {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        coins.add(new Coin(-110, 100, mainstage, -50, -40));
+                        coins.add(new Coin(-80, 100, mainstage, -00, -40));
                     }
                 }),
                 Actions.delay(4f)
@@ -49,10 +48,7 @@ public class LevelScreen extends BaseScreen {
     @Override
     public void update(float delta) {
         for (Coin coin : coins) {
-            if (coin.remove) {
-                coins.removeValue(coin, true);
-                coin.remove();
-            }
+            checkIfCoinRemove(coin);
 
             for (Soot soot : soots) {
                 if (soot.overlaps(coin) && soot.canCarry()) {
@@ -62,51 +58,17 @@ public class LevelScreen extends BaseScreen {
             }
         }
 
+        int countDraggers = 0;
         for (int i = 0; i < soots.size; i++) {
-            // collect coin to bag
-            if (soots.get(i).isCarrying() && soots.get(i).isWithinDistance(20, bag)) {
-                Coin coin = soots.get(i).getRidOfCoin();
-                coin.addAction(Actions.sequence(Actions.parallel(
-                        Actions.scaleTo(0, 0, .2f),
-                        Actions.moveTo(bag.getX() + bag.getWidth() / 8, bag.getY() + bag.getHeight() / 4, .2f)
-                )));
-                bag.incrementSize();
-            }
+            setDraggingBag(i);
+            collectCoinToBag(i);
+            passCoinToOtherSoots(i);
 
-            // pass coin to other soots
-            for (int j = 0; j < soots.size; j++) {
-                if (soots.get(i).id == soots.get(j).id)
-                    continue;
-
-                if (soots.get(i).isCarrying() && !soots.get(j).isCarrying() &&
-                        soots.get(i).isWithinDistance(40, soots.get(j)) && soots.get(i).getX() < soots.get(j).getX()
-                ) {
-                    System.out.println("mark 0");
-
-                    final Coin coin = soots.get(i).getRidOfCoin();
-
-                    final int finalJ = j;
-                    coin.addAction(Actions.sequence(
-                            Actions.moveTo(
-                                    soots.get(j).toX + (soots.get(i).getX() - soots.get(j).toX) / 2,
-                                    soots.get(i).toY + MathUtils.random(10, 20),
-                                    .3f
-                            ),
-                            Actions.moveTo(
-                                    soots.get(j).toX,
-                                    soots.get(j).toY,
-                                    .3f
-                            ),
-                            Actions.run(new Runnable() {
-                                @Override
-                                public void run() {
-                                    soots.get(finalJ).carry(coin);
-                                }
-                            })
-                    ));
-                }
-            }
+            if (soots.get(i).isDragging)
+                countDraggers++;
         }
+
+        bag.draggers = countDraggers;
     }
 
     @Override
@@ -144,5 +106,77 @@ public class LevelScreen extends BaseScreen {
         if (keycode == Keys.Q) Gdx.app.exit();
         if (keycode == Keys.R) BaseGame.setActiveScreen(new LevelScreen());
         return super.keyDown(keycode);
+    }
+
+    private void checkIfCoinRemove(Coin coin) {
+        if (coin.remove) {
+            coins.removeValue(coin, true);
+            coin.remove();
+        }
+    }
+
+    private void setDraggingBag(int i) {
+        if (soots.get(i).overlaps(bag)) {
+            soots.get(i).isDraggingBag();
+        } else {
+            soots.get(i).notDraggingBag();
+        }
+    }
+
+    private void collectCoinToBag(int i) {
+        if (soots.get(i).isCarrying() && soots.get(i).isWithinDistance(20, bag)) {
+            Coin coin = soots.get(i).getRidOfCoin();
+            coin.addAction(Actions.sequence(Actions.parallel(
+                    Actions.scaleTo(0, 0, .2f),
+                    Actions.moveTo(bag.getX() + bag.getWidth() / 8, bag.getY() + bag.getHeight() / 4, .2f)
+            )));
+            bag.addLoot(coin.weight);
+        }
+    }
+
+    private void passCoinToOtherSoots(int i) {
+        for (int j = 0; j < soots.size; j++) {
+            if (soots.get(i).id == soots.get(j).id)
+                continue;
+
+            if (soots.get(i).isCarrying() && !soots.get(j).isCarrying() && !soots.get(j).isDragging &&
+                    soots.get(i).isWithinDistance(40, soots.get(j)) && soots.get(i).getX() < soots.get(j).getX()
+            ) {
+                final Coin coin = soots.get(i).getRidOfCoin();
+                final int finalJ = j;
+                coin.addAction(Actions.sequence(
+                        Actions.moveTo(
+                                soots.get(j).toX + (soots.get(i).getX() - soots.get(j).toX) / 2,
+                                soots.get(i).toY + MathUtils.random(10, 20),
+                                .3f
+                        ),
+                        Actions.moveTo(
+                                soots.get(j).toX,
+                                soots.get(j).toY,
+                                .3f
+                        ),
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!soots.get(finalJ).isDragging)
+                                    soots.get(finalJ).carry(coin);
+                                else if (soots.get(finalJ).isDragging) {
+                                    coin.clearActions();
+                                    coin.addAction(Actions.forever(Actions.rotateBy(-720f, 1f)));
+                                    coin.addAction(Actions.sequence(
+                                            Actions.moveTo(200, coin.getY(), 1f),
+                                            Actions.run(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    coin.remove = true;
+                                                }
+                                            })
+                                    ));
+                                }
+                            }
+                        })
+                ));
+            }
+        }
     }
 }

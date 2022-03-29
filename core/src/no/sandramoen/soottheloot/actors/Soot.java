@@ -15,6 +15,7 @@ public class Soot extends BaseActor {
     private float movementSpeed = 18f;
     private Animation<TextureRegion> runningAnimation;
     private Animation<TextureRegion> carryingAnimation;
+    private Animation<TextureRegion> draggingAnimation;
     private Array<Coin> coins = new Array();
     public float toX = -1;
     public float toY = -1;
@@ -22,6 +23,7 @@ public class Soot extends BaseActor {
     public final int maxCarry = 1;
     public int carrying = 0;
     public final int id = MathUtils.random(0, 9999);
+    public boolean isDragging = true;
 
     public Soot(float x, float y, Stage stage) {
         super(x, y, stage);
@@ -40,7 +42,12 @@ public class Soot extends BaseActor {
         carryingAnimation = new Animation(.1f, images, Animation.PlayMode.LOOP);
         images.clear();
 
-        setAnimation(runningAnimation);
+        images.add(BaseGame.textureAtlas.findRegion("soot/dragging1"));
+        images.add(BaseGame.textureAtlas.findRegion("soot/dragging2"));
+        draggingAnimation = new Animation(.1f, images, Animation.PlayMode.LOOP);
+        images.clear();
+
+        setAnimation(draggingAnimation);
 
         setSize(8, 8);
         setBoundaryPolygon(8);
@@ -60,6 +67,7 @@ public class Soot extends BaseActor {
         setAnimation(carryingAnimation);
         setSize(8, 8);
         coins.add(coin);
+        isDragging = false;
     }
 
     public void notCarrying() {
@@ -69,7 +77,7 @@ public class Soot extends BaseActor {
     }
 
     public boolean canCarry() {
-        return maxCarry > carrying;
+        return maxCarry > carrying && !isDragging;
     }
 
     public boolean isCarrying() {
@@ -84,5 +92,23 @@ public class Soot extends BaseActor {
             return coins.pop();
         }
         return null;
+    }
+
+    public void isDraggingBag() {
+        if (!isDragging) {
+            isDragging = true;
+            setAnimation(draggingAnimation);
+            setSize(8, 8);
+            carrying = 0;
+            getRidOfCoin();
+        }
+    }
+
+    public void notDraggingBag() {
+        if (isDragging) {
+            isDragging = false;
+            setAnimation(runningAnimation);
+            setSize(8, 8);
+        }
     }
 }

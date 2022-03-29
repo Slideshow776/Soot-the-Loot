@@ -17,6 +17,7 @@ public class Coin extends BaseActor {
     private BaseActor shadow;
 
     public boolean remove = false;
+    public float weight = .1f;
 
     public Coin(float x, float y, Stage stage, float toX, float toY) {
         super(x, y, stage);
