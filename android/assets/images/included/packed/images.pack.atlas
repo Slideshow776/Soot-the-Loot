@@ -47,21 +47,35 @@ bag
   index: -1
 
 images.pack3.png
-size: 256, 128
+size: 512, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-soot/running1
+soot/carrying1
   rotate: false
   xy: 2, 2
-  size: 79, 69
-  orig: 79, 69
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/carrying2
+  rotate: false
+  xy: 76, 2
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/running1
+  rotate: false
+  xy: 150, 2
+  size: 72, 66
+  orig: 72, 66
   offset: 0, 0
   index: -1
 soot/running2
   rotate: false
-  xy: 83, 2
-  size: 79, 69
-  orig: 79, 69
+  xy: 224, 2
+  size: 72, 66
+  orig: 72, 66
   offset: 0, 0
   index: -1

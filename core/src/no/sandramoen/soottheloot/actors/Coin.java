@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.utils.Align;
 
 import no.sandramoen.soottheloot.utils.BaseActor;
@@ -42,7 +41,7 @@ public class Coin extends BaseActor {
                         Actions.run(new Runnable() {
                             @Override
                             public void run() {
-                                collisionEnabled = false;
+                                isCollisionEnabled = false;
                             }
                         })
                 ),
@@ -77,5 +76,10 @@ public class Coin extends BaseActor {
     public boolean remove() {
         shadow.remove();
         return super.remove();
+    }
+
+    public void caught() {
+        clearActions();
+        isCollisionEnabled = false;
     }
 }

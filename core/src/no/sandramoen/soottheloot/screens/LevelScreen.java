@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 
@@ -54,10 +55,55 @@ public class LevelScreen extends BaseScreen {
             }
 
             for (Soot soot : soots) {
-                if (soot.overlaps(coin)) {
-                    coins.removeValue(coin, true);
-                    coin.remove();
-                    bag.incrementSize();
+                if (soot.overlaps(coin) && soot.canCarry()) {
+                    soot.carry(coin);
+                    coin.caught();
+                }
+            }
+        }
+
+        for (int i = 0; i < soots.size; i++) {
+            // collect coin to bag
+            if (soots.get(i).isCarrying() && soots.get(i).isWithinDistance(20, bag)) {
+                Coin coin = soots.get(i).getRidOfCoin();
+                coin.addAction(Actions.sequence(Actions.parallel(
+                        Actions.scaleTo(0, 0, .2f),
+                        Actions.moveTo(bag.getX() + bag.getWidth() / 8, bag.getY() + bag.getHeight() / 4, .2f)
+                )));
+                bag.incrementSize();
+            }
+
+            // pass coin to other soots
+            for (int j = 0; j < soots.size; j++) {
+                if (soots.get(i).id == soots.get(j).id)
+                    continue;
+
+                if (soots.get(i).isCarrying() && !soots.get(j).isCarrying() &&
+                        soots.get(i).isWithinDistance(40, soots.get(j)) && soots.get(i).getX() < soots.get(j).getX()
+                ) {
+                    System.out.println("mark 0");
+
+                    final Coin coin = soots.get(i).getRidOfCoin();
+
+                    final int finalJ = j;
+                    coin.addAction(Actions.sequence(
+                            Actions.moveTo(
+                                    soots.get(j).toX + (soots.get(i).getX() - soots.get(j).toX) / 2,
+                                    soots.get(i).toY + MathUtils.random(10, 20),
+                                    .3f
+                            ),
+                            Actions.moveTo(
+                                    soots.get(j).toX,
+                                    soots.get(j).toY,
+                                    .3f
+                            ),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    soots.get(finalJ).carry(coin);
+                                }
+                            })
+                    ));
                 }
             }
         }
@@ -80,13 +126,16 @@ public class LevelScreen extends BaseScreen {
             }
         }
 
-        if (currentSoot != null)
+        if (currentSoot != null) {
+            currentSoot.toX = worldCoordinates.x - currentSoot.getWidth() / 2;
+            currentSoot.toY = worldCoordinates.y - currentSoot.getHeight() / 2;
             currentSoot.addAction(Actions.moveTo(
                     worldCoordinates.x - currentSoot.getWidth() / 2,
                     worldCoordinates.y - currentSoot.getHeight() / 2,
                     1f,
                     Interpolation.pow2)
             );
+        }
         return super.touchDown(screenX, screenY, pointer, button);
     }
 

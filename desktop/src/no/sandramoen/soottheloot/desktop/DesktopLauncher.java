@@ -22,7 +22,7 @@ public class DesktopLauncher {
 
 		// miscellaneous
 		config.title = "Soot the Loot";
-		config.resizable = true;
+		config.resizable = false;
 		config.addIcon("images/excluded/desktopIcon.png", Files.FileType.Internal);
 		new LwjglApplication(new MyGdxGame(), config);
 	}

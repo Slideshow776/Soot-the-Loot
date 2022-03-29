@@ -34,7 +34,7 @@ public class BaseActor extends Group {
     public boolean pause = false;
     public float animationWidth = getWidth();
     public float animationHeight = getWidth();
-    public boolean collisionEnabled = true;
+    public boolean isCollisionEnabled = true;
 
     public BaseActor(float x, float y, Stage stage) {
         super();
@@ -347,7 +347,7 @@ public class BaseActor extends Group {
     }
 
     public boolean overlaps(BaseActor other) {
-        if (!collisionEnabled || !other.collisionEnabled) return false;
+        if (!isCollisionEnabled || !other.isCollisionEnabled) return false;
         Polygon poly1 = this.getBoundaryPolygon();
         Polygon poly2 = other.getBoundaryPolygon();
 
@@ -359,7 +359,7 @@ public class BaseActor extends Group {
     }
 
     public Vector2 preventOverlap(BaseActor other) {
-        if (!collisionEnabled || !other.collisionEnabled) return null;
+        if (!isCollisionEnabled || !other.isCollisionEnabled) return null;
         Polygon poly1 = this.getBoundaryPolygon();
         Polygon poly2 = other.getBoundaryPolygon();
 
@@ -375,6 +375,11 @@ public class BaseActor extends Group {
 
         this.moveBy(mtv.normal.x * mtv.depth, mtv.normal.y * mtv.depth);
         return mtv.normal;
+    }
+
+    public boolean isWithinDistance(float distance, BaseActor other) {
+        double distanceBetween = Math.sqrt(Math.pow((other.getX() - getX()), 2) + Math.pow((other.getY() - getY()), 2));
+        return distanceBetween <= distance ;
     }
 
     // miscellaneous -------------------------------------------------------------------------------------------
