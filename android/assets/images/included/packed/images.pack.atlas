@@ -4,9 +4,23 @@ size: 1024, 1024
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-vignette
+coin
   rotate: false
   xy: 2, 5
+  size: 136, 130
+  orig: 136, 130
+  offset: 0, 0
+  index: -1
+ground
+  rotate: false
+  xy: 804, 926
+  size: 162, 11
+  orig: 162, 11
+  offset: 0, 0
+  index: -1
+vignette
+  rotate: false
+  xy: 2, 137
   size: 800, 800
   orig: 800, 800
   offset: 0, 0
@@ -16,5 +30,38 @@ whitePixel
   xy: 2, 2
   size: 1, 1
   orig: 1, 1
+  offset: 0, 0
+  index: -1
+
+images.pack2.png
+size: 512, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+bag
+  rotate: false
+  xy: 2, 2
+  size: 477, 240
+  orig: 477, 240
+  offset: 0, 0
+  index: -1
+
+images.pack3.png
+size: 256, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+soot/running1
+  rotate: false
+  xy: 2, 2
+  size: 79, 69
+  orig: 79, 69
+  offset: 0, 0
+  index: -1
+soot/running2
+  rotate: false
+  xy: 83, 2
+  size: 79, 69
+  orig: 79, 69
   offset: 0, 0
   index: -1
