@@ -19,13 +19,13 @@ public class Coin extends BaseActor {
 
     public boolean remove = false;
 
-    public Coin(float x, float y, Stage stage) {
+    public Coin(float x, float y, Stage stage, float toX, float toY) {
         super(x, y, stage);
         loadImage("coin");
         setSize(10, 10);
         setBoundaryPolygon(8);
 
-        Vector2 bounceTo = new Vector2(MathUtils.random(-70, 20), MathUtils.random(-50, -32));
+        Vector2 bounceTo = new Vector2(toX, toY);
         Vector2 bounceAway = new Vector2(MathUtils.random(110, 200), MathUtils.random(10, 200));
         float bounceToDuration = MathUtils.random(1.5f, 3f);
         float bounceAwayDuration = MathUtils.random(1.5f, 3f);

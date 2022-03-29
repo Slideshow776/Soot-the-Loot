@@ -26,7 +26,7 @@ public class LevelScreen extends BaseScreen {
     public void initialize() {
         BaseActor.setWorldBounds(100, 100);
         new Ground(mainstage);
-        bag = new Bag(80f, -35f,mainstage);
+        bag = new Bag(80f, -35f, mainstage);
         coins = new Array();
 
         BaseActor coinSpawner = new BaseActor(0, 0, mainstage);
@@ -34,20 +34,15 @@ public class LevelScreen extends BaseScreen {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        coins.add(new Coin(-110, 100, mainstage));
-                        coins.add(new Coin(-105, 100, mainstage));
-                        coins.add(new Coin(-100, 100, mainstage));
-                        coins.add(new Coin(-95, 100, mainstage));
+                        coins.add(new Coin(-110, 100, mainstage, -50, -40));
                     }
                 }),
                 Actions.delay(4f)
         )));
 
         soots = new Array();
-        soots.add(new Soot(95, -35, mainstage));
-        soots.add(new Soot(90, -35, mainstage));
-        soots.add(new Soot(85, -35, mainstage));
-        soots.add(new Soot(80, -35, mainstage));
+        for (int i = 0; i < 4; i++)
+            soots.add(new Soot(80 + 5 * i, -35, mainstage));
     }
 
     @Override
