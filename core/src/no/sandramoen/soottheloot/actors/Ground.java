@@ -19,7 +19,7 @@ public class Ground extends BaseActor {
 
         ground1 = new BaseActor(ground0.getX() - ground0.getWidth() + .1f, ground0.getY(), getStage());
         ground1.loadImage("ground");
-        ground1.setSize(worldBounds.width * 3f, 20);
+        ground1.setSize(ground0.getWidth(), ground0.getHeight());
 
         addActor(ground0);
         addActor(ground1);

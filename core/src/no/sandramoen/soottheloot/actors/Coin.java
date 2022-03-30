@@ -68,7 +68,7 @@ public class Coin extends BaseActor {
                 Actions.parallel( // bounce away
                         Actions.scaleTo(0, 0, bounceAwayDuration),
                         Actions.moveTo(bounceAway.x, shadow.getY(), bounceAwayDuration),
-                        Actions.fadeOut(bounceAwayDuration)
+                        Actions.fadeOut(bounceAwayDuration * .5f)
                 )
         ));
     }

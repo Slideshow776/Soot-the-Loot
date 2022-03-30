@@ -14,6 +14,7 @@ import no.sandramoen.soottheloot.actors.Bag;
 import no.sandramoen.soottheloot.actors.Coin;
 import no.sandramoen.soottheloot.actors.Ground;
 import no.sandramoen.soottheloot.actors.Soot;
+import no.sandramoen.soottheloot.actors.Wall;
 import no.sandramoen.soottheloot.utils.BaseActor;
 import no.sandramoen.soottheloot.utils.BaseGame;
 import no.sandramoen.soottheloot.utils.BaseScreen;
@@ -30,8 +31,13 @@ public class LevelScreen extends BaseScreen {
     public void initialize() {
         BaseActor.setWorldBounds(100, 100);
         new Ground(mainstage);
+        new Wall(mainstage);
         bag = new Bag(70f, -35f, mainstage);
         coins = new Array();
+
+        soots = new Array();
+        for (int i = 0; i < 8; i++)
+            soots.add(new Soot(80 + 2 * i, -35, mainstage));
 
         BaseActor coinSpawner = new BaseActor(0, 0, mainstage);
         coinSpawner.addAction(Actions.forever(Actions.sequence(
@@ -48,10 +54,6 @@ public class LevelScreen extends BaseScreen {
                 }),
                 Actions.delay(4f)
         )));
-
-        soots = new Array();
-        for (int i = 0; i < 8; i++)
-            soots.add(new Soot(80 + 2 * i, -35, mainstage));
 
         uiSetup();
     }
@@ -194,7 +196,8 @@ public class LevelScreen extends BaseScreen {
 
     private void uiSetup() {
         lootCollectedLabel = new Label("Loot: 0", BaseGame.label36Style);
-        lootCollectedLabel.setColor(Color.BLUE);
+        Color pink = new Color(0.776f, 0.318f, 0.592f, 1f);
+        lootCollectedLabel.setColor(pink);
         uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f);
     }
 }
