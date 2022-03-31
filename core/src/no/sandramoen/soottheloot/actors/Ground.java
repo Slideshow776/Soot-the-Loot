@@ -11,10 +11,10 @@ public class Ground extends BaseActor {
     private float groundSpeed = .5f;
 
     public Ground(Stage stage) {
-        super(-55, -25, stage);
+        super(-55, -27.2f, stage);
         ground0 = new BaseActor(getX(), getY(), getStage());
         ground0.loadImage("ground");
-        ground0.setSize(worldBounds.width * 3f, 20);
+        ground0.setSize(worldBounds.width * 3f, 25);
         /*ground0.setColor(Color.PINK);*/
 
         ground1 = new BaseActor(ground0.getX() - ground0.getWidth() + .1f, ground0.getY(), getStage());

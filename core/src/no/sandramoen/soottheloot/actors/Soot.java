@@ -20,6 +20,8 @@ public class Soot extends BaseActor {
     private Array<Coin> coins = new Array();
     public float toX = -1;
     public float toY = -1;
+    public float pitch = MathUtils.random(.65f, 1.5f);
+    public boolean hasPickedUp = false;
 
     public final int maxCarry = 1;
     public int carrying = 0;
@@ -32,19 +34,21 @@ public class Soot extends BaseActor {
         toX = getX();
         toY = getY();
 
+        int randomPrefix = MathUtils.random(0, 3);
+
         Array<TextureAtlas.AtlasRegion> images = new Array();
-        images.add(BaseGame.textureAtlas.findRegion("soot/running1"));
-        images.add(BaseGame.textureAtlas.findRegion("soot/running2"));
+        images.add(BaseGame.textureAtlas.findRegion("soot/" + randomPrefix + "running1"));
+        images.add(BaseGame.textureAtlas.findRegion("soot/" + randomPrefix + "running2"));
         runningAnimation = new Animation(.1f, images, Animation.PlayMode.LOOP);
         images.clear();
 
-        images.add(BaseGame.textureAtlas.findRegion("soot/carrying1"));
-        images.add(BaseGame.textureAtlas.findRegion("soot/carrying2"));
+        images.add(BaseGame.textureAtlas.findRegion("soot/" + randomPrefix + "carrying1"));
+        images.add(BaseGame.textureAtlas.findRegion("soot/" + randomPrefix + "carrying2"));
         carryingAnimation = new Animation(.1f, images, Animation.PlayMode.LOOP);
         images.clear();
 
-        images.add(BaseGame.textureAtlas.findRegion("soot/dragging1"));
-        images.add(BaseGame.textureAtlas.findRegion("soot/dragging2"));
+        images.add(BaseGame.textureAtlas.findRegion("soot/" + randomPrefix + "dragging1"));
+        images.add(BaseGame.textureAtlas.findRegion("soot/" + randomPrefix + "dragging2"));
         draggingAnimation = new Animation(.1f, images, Animation.PlayMode.LOOP);
         images.clear();
 
@@ -64,6 +68,10 @@ public class Soot extends BaseActor {
     }
 
     public void carry(Coin coin) {
+        if (!hasPickedUp) {
+            BaseGame.sootPickupSound.play(BaseGame.soundVolume, pitch, 0);
+            hasPickedUp = true;
+        }
         carrying++;
         setAnimation(carryingAnimation);
         setSize(8, 8);
@@ -87,7 +95,8 @@ public class Soot extends BaseActor {
 
     public Coin getRidOfCoin() {
         if (isCarrying()) {
-            carrying--;
+            BaseGame.sootTossSound.play(BaseGame.soundVolume, pitch, 0);
+            carrying = 0;
             addAction(Actions.sequence(
                     Actions.delay(.25f),
                     Actions.run(new Runnable() {
@@ -105,6 +114,7 @@ public class Soot extends BaseActor {
 
     public void isDraggingBag() {
         if (!isDragging) {
+            BaseGame.sootDraggingSound.play(BaseGame.soundVolume, pitch, 0);
             isDragging = true;
             setAnimation(draggingAnimation);
             setSize(8, 8);

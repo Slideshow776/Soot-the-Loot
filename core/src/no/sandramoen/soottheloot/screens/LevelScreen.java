@@ -26,13 +26,20 @@ public class LevelScreen extends BaseScreen {
     private Array<Coin> coins;
 
     private Label lootCollectedLabel;
+    private float time = 0f;
+    private float movement = 0f;
 
     @Override
     public void initialize() {
+        BaseGame.levelMusic.setVolume(BaseGame.musicVolume);
+        BaseGame.levelMusic.setLooping(true);
+        BaseGame.levelMusic.play();
+
         BaseActor.setWorldBounds(100, 100);
         new Ground(mainstage);
         new Wall(mainstage);
-        bag = new Bag(70f, -35f, mainstage);
+        // new Adventurer(-330, -45, mainstage);
+        bag = new Bag(70, -35, mainstage);
         coins = new Array();
 
         soots = new Array();
@@ -50,12 +57,14 @@ public class LevelScreen extends BaseScreen {
                         coins.add(new Coin(-80, 100, mainstage, -30, -32));
                         coins.add(new Coin(-80, 100, mainstage, -40, -33));
                         coins.add(new Coin(-80, 100, mainstage, -50, -35));
+                        coins.add(new Coin(-80, 100, mainstage, 0, -40));
                     }
                 }),
                 Actions.delay(4f)
         )));
 
         uiSetup();
+
     }
 
     @Override
@@ -66,6 +75,7 @@ public class LevelScreen extends BaseScreen {
             for (Soot soot : soots) {
                 if (soot.overlaps(coin) && soot.canCarry()) {
                     soot.carry(coin);
+                    BaseGame.sootCaughtSound.play(BaseGame.soundVolume, soot.pitch, 0f);
                     coin.caught();
                 }
             }
@@ -89,6 +99,7 @@ public class LevelScreen extends BaseScreen {
         Vector3 worldCoordinates = mainstage.getCamera().unproject(new Vector3(screenX, screenY, 0f));
         if (worldCoordinates.y > -28) worldCoordinates.set(worldCoordinates.x, -28, 0f);
 
+        Soot pastSoot = currentSoot;
         for (Soot soot : soots) {
             if (soot != currentSoot)
                 soot.setDebug(false);
@@ -98,10 +109,12 @@ public class LevelScreen extends BaseScreen {
                     currentSoot.setDebug(false);
                 currentSoot = soot;
                 soot.setDebug(true);
+                BaseGame.sootChosenSound.play(BaseGame.soundVolume, soot.pitch, 0);
             }
         }
 
-        if (currentSoot != null) {
+        if (currentSoot != null && pastSoot == currentSoot) {
+            BaseGame.sootGoToSound.play(BaseGame.soundVolume, currentSoot.pitch, 0);
             currentSoot.toX = worldCoordinates.x - currentSoot.getWidth() / 2;
             currentSoot.toY = worldCoordinates.y - currentSoot.getHeight() / 2;
             currentSoot.addAction(Actions.moveTo(
@@ -143,7 +156,7 @@ public class LevelScreen extends BaseScreen {
                     Actions.scaleTo(0, 0, .2f),
                     Actions.moveTo(bag.getX() + bag.getWidth() / 8, bag.getY() + bag.getHeight() / 4, .2f)
             )));
-            bag.addLoot(coin.weight);
+            bag.addLoot(coin.weight, coin.value);
             lootCollectedLabel.setText("Loot: " + bag.getLoot());
         }
     }
@@ -196,8 +209,7 @@ public class LevelScreen extends BaseScreen {
 
     private void uiSetup() {
         lootCollectedLabel = new Label("Loot: 0", BaseGame.label36Style);
-        Color pink = new Color(0.776f, 0.318f, 0.592f, 1f);
-        lootCollectedLabel.setColor(pink);
+        lootCollectedLabel.setColor(BaseGame.pink);
         uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f);
     }
 }

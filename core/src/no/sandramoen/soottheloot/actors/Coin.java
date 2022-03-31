@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
 
 import no.sandramoen.soottheloot.utils.BaseActor;
+import no.sandramoen.soottheloot.utils.BaseGame;
 
 public class Coin extends BaseActor {
 
@@ -18,6 +19,7 @@ public class Coin extends BaseActor {
 
     public boolean remove = false;
     public float weight = .05f;
+    public int value = 1;
 
     public Coin(float x, float y, Stage stage, float toX, float toY) {
         super(x, y, stage);
@@ -36,6 +38,12 @@ public class Coin extends BaseActor {
                         Actions.moveTo(bounceTo.x, bounceTo.y, bounceToDuration, Interpolation.slowFast),
                         Actions.rotateBy(MathUtils.random(0, 360), bounceToDuration)
                 ),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        BaseGame.coinDropSound.play(BaseGame.soundVolume, MathUtils.random(.5f, 1.5f), 0);
+                    }
+                }),
                 Actions.parallel( // bounce away
                         Actions.moveTo(bounceAway.x, bounceAway.y, bounceAwayDuration, Interpolation.fastSlow),
                         Actions.rotateBy(MathUtils.random(-720, 720), bounceAwayDuration),

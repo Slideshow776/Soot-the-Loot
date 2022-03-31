@@ -1,10 +1,14 @@
 package no.sandramoen.soottheloot.actors;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 
 import no.sandramoen.soottheloot.utils.BaseActor;
+import no.sandramoen.soottheloot.utils.BaseGame;
 
 public class Bag extends BaseActor {
     private float originX = -1;
@@ -39,23 +43,48 @@ public class Bag extends BaseActor {
         super.act(delta);
         if (draggers == 0) {
             setX(getX() + 1f);
-        }
-        else if (weight <= draggers && getX() >= originX) {
+        } else if (weight <= draggers && getX() >= originX) {
             setX(getX() - .05f);
-        }
-        else if (weight > draggers) {
+        } else if (weight > draggers) {
             setX(getX() + .05f);
         }
     }
 
-    public void addLoot(float weight) {
+    public void addLoot(float weight, int value) {
+        BaseGame.coinLooted.play(BaseGame.soundVolume);
         setSize(getWidth(), getHeight() + .125f);
         this.weight += weight;
         loot++;
         effect.scaleBy(.001f);
+
+        addFloatingValueText(value);
     }
 
     public int getLoot() {
         return loot;
+    }
+
+    private void addFloatingValueText(int value) {
+        final BaseActor labelActor = new BaseActor(
+                getX() + MathUtils.random(-10, 10),
+                getY() + (getHeight() / 2) + MathUtils.random(-5, 5),
+                getStage()
+        );
+        Label label = new Label("+" + value, BaseGame.label26Style);
+        label.setFontScale(.125f);
+        label.setColor(BaseGame.pink);
+        labelActor.addActor(label);
+        labelActor.addAction(Actions.sequence(
+                Actions.parallel(
+                        Actions.moveBy(10, 10, 2),
+                        Actions.fadeOut(2)
+                ),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        labelActor.remove();
+                    }
+                })
+        ));
     }
 }

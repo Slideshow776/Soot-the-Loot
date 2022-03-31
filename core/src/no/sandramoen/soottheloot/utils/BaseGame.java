@@ -34,11 +34,21 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
     private static boolean enableCustomShaders = true;
 
     // game assets
+    public static Color pink = new Color(0.643f, 0.867f, 0.859f, 1f);
     public static LabelStyle label36Style;
     public static LabelStyle label26Style;
     private static TextButtonStyle textButtonStyle;
     public static TextureAtlas textureAtlas;
     private static Skin skin;
+    public static Music levelMusic;
+    public static Sound coinDropSound;
+    public static Sound coinLooted;
+    public static Sound sootChosenSound;
+    public static Sound sootTossSound;
+    public static Sound sootPickupSound;
+    public static Sound sootGoToSound;
+    public static Sound sootCaughtSound;
+    public static Sound sootDraggingSound;
 
     // game state
     public static Preferences prefs;
@@ -96,18 +106,32 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         assetManager.load("images/included/packed/images.pack.atlas", TextureAtlas.class);
 
         // music
-        // assetManager.load("audio/music/320732__shadydave__time-break-drum-only.mp3", Music.class);
+        assetManager.load("audio/music/320685__dpren__swage.mp3", Music.class);
 
         // sound
-        // assetManager.load("audio/sound/202091__spookymodem__falling-bones.wav", Sound.class);
+        assetManager.load("audio/sound/349277__deleted-user-2104797__coin-on-coins-01.wav", Sound.class);
+        assetManager.load("audio/sound/Pickup_Coin13.wav", Sound.class);
+        assetManager.load("audio/sound/soots/chosen.wav", Sound.class);
+        assetManager.load("audio/sound/soots/toss.wav", Sound.class);
+        assetManager.load("audio/sound/soots/pickup.wav", Sound.class);
+        assetManager.load("audio/sound/soots/goTo.wav", Sound.class);
+        assetManager.load("audio/sound/soots/caught.wav", Sound.class);
+        assetManager.load("audio/sound/soots/dragging.wav", Sound.class);
 
         assetManager.finishLoading();
 
         // music
-        // levelMusic = assetManager.get("audio/music/320732__shadydave__time-break-drum-only.mp3", Music.class);
+        levelMusic = assetManager.get("audio/music/320685__dpren__swage.mp3", Music.class);
 
         // sound
-        // bonesSound = assetManager.get("audio/sound/202091__spookymodem__falling-bones.wav", Sound.class);
+        coinDropSound = assetManager.get("audio/sound/349277__deleted-user-2104797__coin-on-coins-01.wav", Sound.class);
+        coinLooted = assetManager.get("audio/sound/Pickup_Coin13.wav", Sound.class);
+        sootChosenSound = assetManager.get("audio/sound/soots/chosen.wav", Sound.class);
+        sootTossSound = assetManager.get("audio/sound/soots/toss.wav", Sound.class);
+        sootPickupSound = assetManager.get("audio/sound/soots/pickup.wav", Sound.class);
+        sootGoToSound = assetManager.get("audio/sound/soots/goTo.wav", Sound.class);
+        sootCaughtSound = assetManager.get("audio/sound/soots/caught.wav", Sound.class);
+        sootDraggingSound = assetManager.get("audio/sound/soots/dragging.wav", Sound.class);
 
         textureAtlas = assetManager.get("images/included/packed/images.pack.atlas");
 

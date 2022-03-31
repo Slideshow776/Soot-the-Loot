@@ -54,48 +54,174 @@ bag
   index: -1
 
 images.pack3.png
-size: 512, 128
+size: 1024, 256
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-soot/carrying1
+soot/0carrying1
+  rotate: false
+  xy: 2, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/0carrying2
+  rotate: false
+  xy: 2, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/0dragging1
+  rotate: false
+  xy: 76, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/0dragging2
   rotate: false
   xy: 2, 2
   size: 72, 66
   orig: 72, 66
   offset: 0, 0
   index: -1
-soot/carrying2
+soot/0running1
+  rotate: false
+  xy: 76, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/0running2
+  rotate: false
+  xy: 150, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/1carrying1
   rotate: false
   xy: 76, 2
   size: 72, 66
   orig: 72, 66
   offset: 0, 0
   index: -1
-soot/dragging1
+soot/1carrying2
+  rotate: false
+  xy: 150, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/1dragging1
+  rotate: false
+  xy: 224, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/1dragging2
   rotate: false
   xy: 150, 2
   size: 72, 66
   orig: 72, 66
   offset: 0, 0
   index: -1
-soot/dragging2
+soot/1running1
+  rotate: false
+  xy: 224, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/1running2
+  rotate: false
+  xy: 298, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/2carrying1
   rotate: false
   xy: 224, 2
   size: 72, 66
   orig: 72, 66
   offset: 0, 0
   index: -1
-soot/running1
+soot/2carrying2
+  rotate: false
+  xy: 298, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/2dragging1
+  rotate: false
+  xy: 372, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/2dragging2
   rotate: false
   xy: 298, 2
   size: 72, 66
   orig: 72, 66
   offset: 0, 0
   index: -1
-soot/running2
+soot/2running1
+  rotate: false
+  xy: 372, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/2running2
+  rotate: false
+  xy: 446, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/3carrying1
   rotate: false
   xy: 372, 2
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/3carrying2
+  rotate: false
+  xy: 446, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/3dragging1
+  rotate: false
+  xy: 520, 138
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/3dragging2
+  rotate: false
+  xy: 446, 2
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/3running1
+  rotate: false
+  xy: 520, 70
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/3running2
+  rotate: false
+  xy: 594, 138
   size: 72, 66
   orig: 72, 66
   offset: 0, 0
