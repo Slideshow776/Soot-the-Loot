@@ -6,28 +6,56 @@ filter: Nearest, Nearest
 repeat: none
 coin
   rotate: false
-  xy: 804, 812
+  xy: 804, 846
   size: 82, 90
   orig: 82, 90
   offset: 0, 0
   index: -1
+diamond
+  rotate: false
+  xy: 133, 102
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 ground
   rotate: false
-  xy: 2, 2
+  xy: 2, 36
   size: 129, 33
   orig: 129, 33
   offset: 0, 0
   index: -1
+ruby
+  rotate: false
+  xy: 804, 812
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+sapphire
+  rotate: false
+  xy: 888, 904
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+sparkle
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 vignette
   rotate: false
-  xy: 2, 102
+  xy: 2, 136
   size: 800, 800
   orig: 800, 800
   offset: 0, 0
   index: -1
 wall
   rotate: false
-  xy: 2, 37
+  xy: 2, 71
   size: 129, 63
   orig: 129, 63
   offset: 0, 0

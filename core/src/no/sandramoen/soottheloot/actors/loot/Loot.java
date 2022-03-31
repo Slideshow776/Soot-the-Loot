@@ -1,4 +1,4 @@
-package no.sandramoen.soottheloot.actors;
+package no.sandramoen.soottheloot.actors.loot;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
@@ -7,26 +7,28 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 
 import no.sandramoen.soottheloot.utils.BaseActor;
 import no.sandramoen.soottheloot.utils.BaseGame;
 
-public class Coin extends BaseActor {
+public class Loot extends BaseActor {
 
     private float fallingSpeed = 1f;
     private float movementSpeed = .5f;
     private BaseActor shadow;
 
     public boolean remove = false;
-    public float weight = .05f;
-    public int value = 1;
+    public float weight;
+    public int value;
 
-    public Coin(float x, float y, Stage stage, float toX, float toY) {
+    public Loot(float x, float y, Stage stage, float weight, int value) {
         super(x, y, stage);
-        loadImage("coin");
-        setSize(10, 10);
-        setBoundaryPolygon(8);
+        this.weight = weight;
+        this.value = value;
+    }
 
+    public void startBounce(float toX, float toY) {
         Vector2 bounceTo = new Vector2(toX, toY);
         Vector2 bounceAway = new Vector2(MathUtils.random(110, 200), MathUtils.random(10, 200));
         float bounceToDuration = MathUtils.random(1.5f, 3f);
@@ -62,7 +64,8 @@ public class Coin extends BaseActor {
                 })
         ));
 
-        shadow = new BaseActor(bounceTo.x + getWidth() / 2, bounceTo.y, stage);
+
+        shadow = new BaseActor(bounceTo.x + getWidth() / 2, bounceTo.y, getStage());
         shadow.loadImage("whitePixel");
         shadow.setSize(1f, .5f);
         shadow.setColor(Color.BLACK);

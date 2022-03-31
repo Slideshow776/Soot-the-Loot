@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
+import no.sandramoen.soottheloot.actors.loot.Loot;
 import no.sandramoen.soottheloot.utils.BaseActor;
 import no.sandramoen.soottheloot.utils.BaseGame;
 
@@ -18,7 +19,7 @@ public class Soot extends BaseActor {
     private Animation<TextureRegion> runningAnimation;
     private Animation<TextureRegion> carryingAnimation;
     private Animation<TextureRegion> draggingAnimation;
-    private Array<Coin> coins = new Array();
+    private Array<Loot> loot = new Array();
     public float toX = -1;
     public float toY = -1;
     public float pitch = MathUtils.random(.65f, 1.5f);
@@ -75,13 +76,13 @@ public class Soot extends BaseActor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        for (Coin coin : coins) {
-            coin.setX(getX());
-            coin.setY(getY() + getHeight() / 2);
+        for (Loot loot : loot) {
+            loot.setX(getX());
+            loot.setY(getY() + getHeight() / 2);
         }
     }
 
-    public void carry(Coin coin) {
+    public void carry(Loot loot) {
         if (!hasPickedUp) {
             BaseGame.sootPickupSound.play(BaseGame.soundVolume, pitch, 0);
             hasPickedUp = true;
@@ -89,7 +90,7 @@ public class Soot extends BaseActor {
         carrying++;
         setAnimation(carryingAnimation);
         setSize(8, 8);
-        coins.add(coin);
+        this.loot.add(loot);
         isDragging = false;
     }
 
@@ -107,7 +108,7 @@ public class Soot extends BaseActor {
         return carrying > 0;
     }
 
-    public Coin getRidOfCoin() {
+    public Loot getRidOfLoot() {
         if (isCarrying()) {
             BaseGame.sootTossSound.play(BaseGame.soundVolume, pitch, 0);
             carrying = 0;
@@ -121,7 +122,7 @@ public class Soot extends BaseActor {
                         }
                     })
             ));
-            return coins.pop();
+            return loot.pop();
         }
         return null;
     }
@@ -133,7 +134,7 @@ public class Soot extends BaseActor {
             setAnimation(draggingAnimation);
             setSize(8, 8);
             carrying = 0;
-            getRidOfCoin();
+            getRidOfLoot();
         }
     }
 

@@ -1,5 +1,6 @@
 package no.sandramoen.soottheloot.utils;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -78,9 +80,9 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         BitmapFont myFont2 = new BitmapFont(Gdx.files.internal("fonts/arcade26.fnt"));
         label26Style.font = myFont2;
 
-        /*if (Gdx.app.getType() != Application.ApplicationType.Android) {
+        if (Gdx.app.getType() != Application.ApplicationType.Android) {
             Gdx.graphics.setCursor(Gdx.graphics.newCursor(new Pixmap(Gdx.files.internal("images/excluded/cursor.png")), 0, 0));
-        }*/
+        }
     }
 
     public void dispose() {

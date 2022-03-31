@@ -4,16 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 
 import no.sandramoen.soottheloot.actors.Bag;
-import no.sandramoen.soottheloot.actors.Coin;
+import no.sandramoen.soottheloot.actors.loot.Coin;
+import no.sandramoen.soottheloot.actors.loot.Diamond;
+import no.sandramoen.soottheloot.actors.loot.Loot;
 import no.sandramoen.soottheloot.actors.Ground;
 import no.sandramoen.soottheloot.actors.Soot;
 import no.sandramoen.soottheloot.actors.Wall;
+import no.sandramoen.soottheloot.actors.loot.Ruby;
+import no.sandramoen.soottheloot.actors.loot.Sapphire;
 import no.sandramoen.soottheloot.utils.BaseActor;
 import no.sandramoen.soottheloot.utils.BaseGame;
 import no.sandramoen.soottheloot.utils.BaseScreen;
@@ -22,9 +27,10 @@ public class LevelScreen extends BaseScreen {
     private Array<Soot> soots;
     private Soot currentSoot;
     private Bag bag;
-    private Array<Coin> coins;
+    private Array<Loot> loot;
 
     private Label lootCollectedLabel;
+    private Label storyLabel;
     private float time = 0f;
     private float movement = 0f;
     private boolean loosingBagFlag = false;
@@ -39,7 +45,7 @@ public class LevelScreen extends BaseScreen {
         new Ground(mainstage);
         new Wall(mainstage);
         bag = new Bag(70, -35, mainstage);
-        coins = new Array();
+        loot = new Array();
 
         soots = new Array();
         for (int i = 0; i < 8; i++)
@@ -50,16 +56,34 @@ public class LevelScreen extends BaseScreen {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        coins.add(new Coin(-80, 100, mainstage, 0, -40));
-                        coins.add(new Coin(-80, 100, mainstage, -10, -35));
-                        coins.add(new Coin(-80, 100, mainstage, -20, -30));
-                        coins.add(new Coin(-80, 100, mainstage, -30, -32));
-                        coins.add(new Coin(-80, 100, mainstage, -40, -33));
-                        coins.add(new Coin(-80, 100, mainstage, -50, -35));
-                        coins.add(new Coin(-80, 100, mainstage, 0, -40));
+                        loot.add(new Coin(-80, 100, mainstage, 0, -40));
+                        loot.add(new Coin(-80, 100, mainstage, -10, -35));
+                        loot.add(new Coin(-80, 100, mainstage, -20, -30));
+                        loot.add(new Coin(-80, 100, mainstage, -30, -32));
+                        loot.add(new Coin(-80, 100, mainstage, -40, -33));
+                        loot.add(new Coin(-80, 100, mainstage, -50, -35));
+                        loot.add(new Coin(-80, 100, mainstage, 0, -40));
                     }
                 }),
                 Actions.delay(4f)
+        )));
+
+        BaseActor gemSpawner = new BaseActor(0, 0, mainstage);
+        coinSpawner.addAction(Actions.forever(Actions.sequence(
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Vector2 randomPosition = new Vector2(MathUtils.random(-50, 30), MathUtils.random(-40, -32));
+                        int randomGem = MathUtils.random(1, 3);
+                        if (randomGem == 1)
+                            loot.add(new Diamond(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                        else if (randomGem == 2)
+                            loot.add(new Ruby(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                        else if (randomGem == 3)
+                            loot.add(new Sapphire(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                    }
+                }),
+                Actions.delay(20f)
         )));
 
         uiSetup();
@@ -67,14 +91,14 @@ public class LevelScreen extends BaseScreen {
 
     @Override
     public void update(float delta) {
-        for (Coin coin : coins) {
-            checkIfCoinRemove(coin);
+        for (Loot loot : loot) {
+            checkIfCoinRemove(loot);
 
             for (Soot soot : soots) {
-                if (soot.overlaps(coin) && soot.canCarry()) {
-                    soot.carry(coin);
+                if (soot.overlaps(loot) && soot.canCarry()) {
+                    soot.carry(loot);
                     BaseGame.sootCaughtSound.play(BaseGame.soundVolume, soot.pitch, 0f);
-                    coin.caught();
+                    loot.caught();
                 }
             }
         }
@@ -91,6 +115,7 @@ public class LevelScreen extends BaseScreen {
 
         bag.draggers = countDraggers;
         loosingBagSounds();
+        checkLooseCondition();
     }
 
     @Override
@@ -133,10 +158,10 @@ public class LevelScreen extends BaseScreen {
         return super.keyDown(keycode);
     }
 
-    private void checkIfCoinRemove(Coin coin) {
-        if (coin.remove) {
-            coins.removeValue(coin, true);
-            coin.remove();
+    private void checkIfCoinRemove(Loot loot) {
+        if (loot.remove) {
+            this.loot.removeValue(loot, true);
+            loot.remove();
         }
     }
 
@@ -170,12 +195,12 @@ public class LevelScreen extends BaseScreen {
                     soots.get(j).playDelayedSound(BaseGame.sootCheerSound);
                 }
             }
-            Coin coin = soots.get(i).getRidOfCoin();
-            coin.addAction(Actions.sequence(Actions.parallel(
+            Loot loot = soots.get(i).getRidOfLoot();
+            loot.addAction(Actions.sequence(Actions.parallel(
                     Actions.scaleTo(0, 0, .2f),
                     Actions.moveTo(bag.getX() + bag.getWidth() / 8, bag.getY() + bag.getHeight() / 4, .2f)
             )));
-            bag.addLoot(coin.weight, coin.value);
+            bag.addLoot(loot.weight, loot.value);
             lootCollectedLabel.setText("Loot: " + bag.getLoot());
         }
     }
@@ -188,9 +213,9 @@ public class LevelScreen extends BaseScreen {
             if (soots.get(i).isCarrying() && !soots.get(j).isCarrying() && !soots.get(j).isDragging && soots.get(j).canCarry() &&
                     soots.get(i).isWithinDistance(40, soots.get(j)) && soots.get(i).getX() < soots.get(j).getX()
             ) {
-                final Coin coin = soots.get(i).getRidOfCoin();
+                final Loot loot = soots.get(i).getRidOfLoot();
                 final int finalJ = j;
-                coin.addAction(Actions.sequence(
+                loot.addAction(Actions.sequence(
                         Actions.moveTo(
                                 soots.get(j).toX + (soots.get(i).getX() - soots.get(j).toX) / 2,
                                 soots.get(i).toY + MathUtils.random(10, 20),
@@ -205,16 +230,16 @@ public class LevelScreen extends BaseScreen {
                             @Override
                             public void run() {
                                 if (!soots.get(finalJ).isDragging && soots.get(finalJ).canCarry())
-                                    soots.get(finalJ).carry(coin);
+                                    soots.get(finalJ).carry(loot);
                                 else {
-                                    coin.clearActions();
-                                    coin.addAction(Actions.forever(Actions.rotateBy(-720f, 1f)));
-                                    coin.addAction(Actions.sequence(
-                                            Actions.moveTo(200, coin.getY(), 1f),
+                                    loot.clearActions();
+                                    loot.addAction(Actions.forever(Actions.rotateBy(-720f, 1f)));
+                                    loot.addAction(Actions.sequence(
+                                            Actions.moveTo(200, loot.getY(), 1f),
                                             Actions.run(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    coin.remove = true;
+                                                    loot.remove = true;
                                                 }
                                             })
                                     ));
@@ -224,6 +249,10 @@ public class LevelScreen extends BaseScreen {
                 ));
             }
         }
+    }
+
+    private void checkLooseCondition() {
+
     }
 
     private void uiSetup() {
@@ -236,13 +265,13 @@ public class LevelScreen extends BaseScreen {
         ));
         uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).row();
 
-        Label goalLabel = new Label("Follow the overburdened Adventurer,\nand grab the loot they're dropping!", BaseGame.label36Style);
-        goalLabel.setFontScale(1.2f);
-        goalLabel.setColor(BaseGame.lightBlue);
-        goalLabel.addAction(Actions.sequence(
+        storyLabel = new Label("Follow the overburdened Adventurer,\nand grab the loot they're dropping!", BaseGame.label36Style);
+        storyLabel.setFontScale(1.2f);
+        storyLabel.setColor(BaseGame.lightBlue);
+        storyLabel.addAction(Actions.sequence(
                 Actions.delay(5f),
                 Actions.fadeOut(1f)
         ));
-        uiTable.add(goalLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).padBottom(Gdx.graphics.getHeight() * .18f);
+        uiTable.add(storyLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).padBottom(Gdx.graphics.getHeight() * .18f);
     }
 }

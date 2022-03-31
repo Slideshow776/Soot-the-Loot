@@ -80,7 +80,7 @@ public class Bag extends BaseActor {
         BaseGame.coinLooted.play(BaseGame.soundVolume);
         setSize(getWidth(), getHeight() + .125f);
         this.weight += weight;
-        loot++;
+        loot+= value;
         effect.scaleBy(.001f);
 
         addFloatingValueText(value);
