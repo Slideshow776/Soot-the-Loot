@@ -1,5 +1,6 @@
 package no.sandramoen.soottheloot.actors;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -27,6 +28,7 @@ public class Soot extends BaseActor {
     public int carrying = 0;
     public final int id = MathUtils.random(0, 9999);
     public boolean isDragging = true;
+    public BaseActor crown;
 
     public Soot(float x, float y, Stage stage) {
         super(x, y, stage);
@@ -56,6 +58,18 @@ public class Soot extends BaseActor {
 
         setSize(8, 8);
         setBoundaryPolygon(8);
+
+        crown = new BaseActor(0, 0, stage);
+        crown.loadImage("soot/crown");
+        crown.setSize(getWidth(), getHeight());
+        crown.setOrigin(Align.center);
+        crown.addAction(Actions.forever(Actions.sequence(
+                Actions.rotateBy(10, .125f),
+                Actions.rotateBy(-20, .25f),
+                Actions.rotateBy(10, .125f)
+        )));
+        crown.setVisible(false);
+        addActor(crown);
     }
 
     @Override
@@ -129,5 +143,21 @@ public class Soot extends BaseActor {
             setAnimation(runningAnimation);
             setSize(8, 8);
         }
+    }
+
+    public void playDelayedSound(final Sound sound) {
+        addAction(Actions.sequence(
+                Actions.delay(MathUtils.random(0f, .5f)),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        sound.play(BaseGame.soundVolume, pitch, 0);
+                    }
+                })
+        ));
+    }
+
+    public void setSelect(boolean isSelected) {
+
     }
 }

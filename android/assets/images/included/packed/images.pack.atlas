@@ -226,3 +226,17 @@ soot/3running2
   orig: 72, 66
   offset: 0, 0
   index: -1
+soot/crown
+  rotate: false
+  xy: 520, 2
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+soot/selected
+  rotate: false
+  xy: 520, 2
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1

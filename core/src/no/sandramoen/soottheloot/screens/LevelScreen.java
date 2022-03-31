@@ -2,7 +2,6 @@ package no.sandramoen.soottheloot.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -28,6 +27,7 @@ public class LevelScreen extends BaseScreen {
     private Label lootCollectedLabel;
     private float time = 0f;
     private float movement = 0f;
+    private boolean loosingBagFlag = false;
 
     @Override
     public void initialize() {
@@ -38,7 +38,6 @@ public class LevelScreen extends BaseScreen {
         BaseActor.setWorldBounds(100, 100);
         new Ground(mainstage);
         new Wall(mainstage);
-        // new Adventurer(-330, -45, mainstage);
         bag = new Bag(70, -35, mainstage);
         coins = new Array();
 
@@ -64,7 +63,6 @@ public class LevelScreen extends BaseScreen {
         )));
 
         uiSetup();
-
     }
 
     @Override
@@ -92,6 +90,7 @@ public class LevelScreen extends BaseScreen {
         }
 
         bag.draggers = countDraggers;
+        loosingBagSounds();
     }
 
     @Override
@@ -102,13 +101,13 @@ public class LevelScreen extends BaseScreen {
         Soot pastSoot = currentSoot;
         for (Soot soot : soots) {
             if (soot != currentSoot)
-                soot.setDebug(false);
+                soot.crown.setVisible(false);
             if (worldCoordinates.x >= soot.getX() && worldCoordinates.x <= soot.getX() + soot.getWidth() &&
                     worldCoordinates.y >= soot.getY() && worldCoordinates.y <= soot.getY() + soot.getHeight()) {
                 if (currentSoot != null)
-                    currentSoot.setDebug(false);
+                    currentSoot.crown.setVisible(false);
                 currentSoot = soot;
-                soot.setDebug(true);
+                soot.crown.setVisible(true);
                 BaseGame.sootChosenSound.play(BaseGame.soundVolume, soot.pitch, 0);
             }
         }
@@ -149,8 +148,28 @@ public class LevelScreen extends BaseScreen {
         }
     }
 
+    private void loosingBagSounds() {
+        if (bag.isLoosing && !loosingBagFlag) {
+            loosingBagFlag = true;
+            for (int j = 0; j < soots.size; j++) {
+                soots.get(j).playDelayedSound(BaseGame.sootScreamSound);
+            }
+        } else if (!bag.isLoosing && loosingBagFlag) {
+            loosingBagFlag = false;
+            for (int j = 0; j < soots.size; j++) {
+                soots.get(j).playDelayedSound(BaseGame.sootPhewSound);
+            }
+        }
+    }
+
     private void collectCoinToBag(int i) {
         if (soots.get(i).isCarrying() && soots.get(i).isWithinDistance(20, bag)) {
+            BaseGame.sootYippeeSound.play(BaseGame.soundVolume, soots.get(i).pitch, 0);
+            for (int j = 0; j < soots.size; j++) {
+                if (soots.get(j).isDragging) {
+                    soots.get(j).playDelayedSound(BaseGame.sootCheerSound);
+                }
+            }
             Coin coin = soots.get(i).getRidOfCoin();
             coin.addAction(Actions.sequence(Actions.parallel(
                     Actions.scaleTo(0, 0, .2f),
@@ -209,7 +228,21 @@ public class LevelScreen extends BaseScreen {
 
     private void uiSetup() {
         lootCollectedLabel = new Label("Loot: 0", BaseGame.label36Style);
-        lootCollectedLabel.setColor(BaseGame.pink);
-        uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f);
+        lootCollectedLabel.setColor(BaseGame.lightBlue);
+        lootCollectedLabel.addAction(Actions.sequence(
+                Actions.fadeOut(0f),
+                Actions.delay(6f),
+                Actions.fadeIn(1f)
+        ));
+        uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).row();
+
+        Label goalLabel = new Label("Follow the overburdened Adventurer,\nand grab the loot they're dropping!", BaseGame.label36Style);
+        goalLabel.setFontScale(1.2f);
+        goalLabel.setColor(BaseGame.lightBlue);
+        goalLabel.addAction(Actions.sequence(
+                Actions.delay(5f),
+                Actions.fadeOut(1f)
+        ));
+        uiTable.add(goalLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).padBottom(Gdx.graphics.getHeight() * .18f);
     }
 }

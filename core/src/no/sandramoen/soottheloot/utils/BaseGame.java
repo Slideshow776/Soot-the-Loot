@@ -1,7 +1,5 @@
 package no.sandramoen.soottheloot.utils;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -12,11 +10,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -34,7 +29,7 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
     private static boolean enableCustomShaders = true;
 
     // game assets
-    public static Color pink = new Color(0.643f, 0.867f, 0.859f, 1f);
+    public static Color lightBlue = new Color(0.643f, 0.867f, 0.859f, 1f);
     public static LabelStyle label36Style;
     public static LabelStyle label26Style;
     private static TextButtonStyle textButtonStyle;
@@ -49,12 +44,16 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
     public static Sound sootGoToSound;
     public static Sound sootCaughtSound;
     public static Sound sootDraggingSound;
+    public static Sound sootYippeeSound;
+    public static Sound sootCheerSound;
+    public static Sound sootScreamSound;
+    public static Sound sootPhewSound;
 
     // game state
     public static Preferences prefs;
     public static boolean loadPersonalParameters;
     public static float soundVolume = 1f;
-    public static float musicVolume = 0.5f;
+    public static float musicVolume = 0.75f;
     public static String currentLocale;
     public static I18NBundle myBundle;
 
@@ -117,6 +116,10 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         assetManager.load("audio/sound/soots/goTo.wav", Sound.class);
         assetManager.load("audio/sound/soots/caught.wav", Sound.class);
         assetManager.load("audio/sound/soots/dragging.wav", Sound.class);
+        assetManager.load("audio/sound/soots/yippie.wav", Sound.class);
+        assetManager.load("audio/sound/soots/cheer.wav", Sound.class);
+        assetManager.load("audio/sound/soots/scream.wav", Sound.class);
+        assetManager.load("audio/sound/soots/phew.wav", Sound.class);
 
         assetManager.finishLoading();
 
@@ -132,6 +135,10 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         sootGoToSound = assetManager.get("audio/sound/soots/goTo.wav", Sound.class);
         sootCaughtSound = assetManager.get("audio/sound/soots/caught.wav", Sound.class);
         sootDraggingSound = assetManager.get("audio/sound/soots/dragging.wav", Sound.class);
+        sootYippeeSound = assetManager.get("audio/sound/soots/yippie.wav", Sound.class);
+        sootCheerSound = assetManager.get("audio/sound/soots/cheer.wav", Sound.class);
+        sootScreamSound = assetManager.get("audio/sound/soots/scream.wav", Sound.class);
+        sootPhewSound = assetManager.get("audio/sound/soots/phew.wav", Sound.class);
 
         textureAtlas = assetManager.get("images/included/packed/images.pack.atlas");
 
