@@ -2,12 +2,15 @@ package no.sandramoen.soottheloot.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import no.sandramoen.soottheloot.actors.Bag;
@@ -28,18 +31,16 @@ public class LevelScreen extends BaseScreen {
     private Soot currentSoot;
     private Bag bag;
     private Array<Loot> loot;
-
     private Label lootCollectedLabel;
     private Label storyLabel;
-    private float time = 0f;
-    private float movement = 0f;
+    private Label label;
+    private Label label1;
     private boolean loosingBagFlag = false;
+    private boolean gameOver = false;
 
     @Override
     public void initialize() {
-        BaseGame.levelMusic.setVolume(BaseGame.musicVolume);
-        BaseGame.levelMusic.setLooping(true);
-        BaseGame.levelMusic.play();
+        playLevelMusic();
 
         BaseActor.setWorldBounds(100, 100);
         new Ground(mainstage);
@@ -51,41 +52,7 @@ public class LevelScreen extends BaseScreen {
         for (int i = 0; i < 8; i++)
             soots.add(new Soot(80 + 2 * i, -35, mainstage));
 
-        BaseActor coinSpawner = new BaseActor(0, 0, mainstage);
-        coinSpawner.addAction(Actions.forever(Actions.sequence(
-                Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        loot.add(new Coin(-80, 100, mainstage, 0, -40));
-                        loot.add(new Coin(-80, 100, mainstage, -10, -35));
-                        loot.add(new Coin(-80, 100, mainstage, -20, -30));
-                        loot.add(new Coin(-80, 100, mainstage, -30, -32));
-                        loot.add(new Coin(-80, 100, mainstage, -40, -33));
-                        loot.add(new Coin(-80, 100, mainstage, -50, -35));
-                        loot.add(new Coin(-80, 100, mainstage, 0, -40));
-                    }
-                }),
-                Actions.delay(4f)
-        )));
-
-        BaseActor gemSpawner = new BaseActor(0, 0, mainstage);
-        coinSpawner.addAction(Actions.forever(Actions.sequence(
-                Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        Vector2 randomPosition = new Vector2(MathUtils.random(-50, 30), MathUtils.random(-40, -32));
-                        int randomGem = MathUtils.random(1, 3);
-                        if (randomGem == 1)
-                            loot.add(new Diamond(-80, 100, mainstage, randomPosition.x, randomPosition.y));
-                        else if (randomGem == 2)
-                            loot.add(new Ruby(-80, 100, mainstage, randomPosition.x, randomPosition.y));
-                        else if (randomGem == 3)
-                            loot.add(new Sapphire(-80, 100, mainstage, randomPosition.x, randomPosition.y));
-                    }
-                }),
-                Actions.delay(20f)
-        )));
-
+        spawnLoot();
         uiSetup();
     }
 
@@ -115,11 +82,14 @@ public class LevelScreen extends BaseScreen {
 
         bag.draggers = countDraggers;
         loosingBagSounds();
-        checkLooseCondition();
+        checkGameOver();
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (!BaseGame.levelMusic.isPlaying())
+            playLevelMusic();
+
         Vector3 worldCoordinates = mainstage.getCamera().unproject(new Vector3(screenX, screenY, 0f));
         if (worldCoordinates.y > -28) worldCoordinates.set(worldCoordinates.x, -28, 0f);
 
@@ -251,8 +221,62 @@ public class LevelScreen extends BaseScreen {
         }
     }
 
-    private void checkLooseCondition() {
+    private void checkGameOver() {
+        if (bag.getX() > 110 && !gameOver) {
+            gameOver = true;
+            lootCollectedLabel.clearActions();
+            storyLabel.clearActions();
 
+            storyLabel.setText("GAME OVER!");
+            storyLabel.setFontScale(2);
+            storyLabel.addAction(Actions.fadeIn(1f));
+            label.addAction(Actions.fadeIn(1f));
+            label1.addAction(Actions.fadeIn(1f));
+            for (Soot soot : soots) {
+                soot.addAction(Actions.moveTo(200, soot.getY(), 1f));
+            }
+        }
+    }
+
+    private void spawnLoot() {
+        new BaseActor(0, 0, mainstage).addAction(Actions.forever(Actions.sequence(
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        loot.add(new Coin(-80, 100, mainstage, 0, -40));
+                        loot.add(new Coin(-80, 100, mainstage, -10, -35));
+                        loot.add(new Coin(-80, 100, mainstage, -20, -30));
+                        loot.add(new Coin(-80, 100, mainstage, -30, -32));
+                        loot.add(new Coin(-80, 100, mainstage, -40, -33));
+                        loot.add(new Coin(-80, 100, mainstage, -50, -35));
+                        loot.add(new Coin(-80, 100, mainstage, 0, -40));
+                    }
+                }),
+                Actions.delay(4f)
+        )));
+
+        new BaseActor(0, 0, mainstage).addAction(Actions.forever(Actions.sequence(
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Vector2 randomPosition = new Vector2(MathUtils.random(-50, 30), MathUtils.random(-40, -32));
+                        int randomGem = MathUtils.random(1, 3);
+                        if (randomGem == 1)
+                            loot.add(new Diamond(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                        else if (randomGem == 2)
+                            loot.add(new Ruby(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                        else if (randomGem == 3)
+                            loot.add(new Sapphire(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                    }
+                }),
+                Actions.delay(20f)
+        )));
+    }
+
+    private void playLevelMusic() {
+        BaseGame.levelMusic.setVolume(BaseGame.musicVolume);
+        BaseGame.levelMusic.setLooping(true);
+        BaseGame.levelMusic.play();
     }
 
     private void uiSetup() {
@@ -272,6 +296,16 @@ public class LevelScreen extends BaseScreen {
                 Actions.delay(5f),
                 Actions.fadeOut(1f)
         ));
-        uiTable.add(storyLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).padBottom(Gdx.graphics.getHeight() * .18f);
+        uiTable.add(storyLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).row();
+
+        Color color = new Color(0.035f, 0.039f, 0.078f, 1f);
+        label = new Label("You lost the bag, silly!", BaseGame.label26Style);
+        label.setColor(color);
+        label.addAction(Actions.fadeOut(0));
+        uiTable.add(label).padBottom(Gdx.graphics.getHeight() * .01f).row();
+        label1 = new Label("Press 'R' to restart", BaseGame.label26Style);
+        label1.setColor(color);
+        label1.addAction(Actions.fadeOut(0));
+        uiTable.add(label1).padBottom(Gdx.graphics.getHeight() * .08f);
     }
 }
