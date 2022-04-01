@@ -1,4 +1,4 @@
-package no.sandramoen.soottheloot.actors.loot;
+package no.sandramoen.soottheloot.actors;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
@@ -7,25 +7,22 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 
 import no.sandramoen.soottheloot.utils.BaseActor;
 import no.sandramoen.soottheloot.utils.BaseGame;
 
-public class Loot extends BaseActor {
-
-    private float fallingSpeed = 1f;
-    private float movementSpeed = .5f;
+public class Trash extends BaseActor {
     private BaseActor shadow;
-
     public boolean remove = false;
-    public float weight;
-    public int value;
 
-    public Loot(float x, float y, Stage stage, float weight, int value) {
+    public Trash(float x, float y, Stage stage, float toX, float toY) {
         super(x, y, stage);
-        this.weight = weight;
-        this.value = value;
+        int random = MathUtils.random(0, 4);
+        loadImage("trash" + random);
+        setColor(Color.GRAY);
+        setSize(25, 25);
+        setBoundaryPolygon(8);
+        startBounce(toX, toY);
     }
 
     public void startBounce(float toX, float toY) {
@@ -59,7 +56,7 @@ public class Loot extends BaseActor {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        remove = true;
+                        remove();
                     }
                 })
         ));
@@ -88,11 +85,5 @@ public class Loot extends BaseActor {
     public boolean remove() {
         shadow.remove();
         return super.remove();
-    }
-
-    public void caught() {
-        clearActions();
-        isCollisionEnabled = false;
-        shadow.setVisible(false);
     }
 }

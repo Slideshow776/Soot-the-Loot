@@ -1,5 +1,6 @@
 package no.sandramoen.soottheloot.actors;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,8 +12,7 @@ import no.sandramoen.soottheloot.utils.BaseActor;
 import no.sandramoen.soottheloot.utils.BaseGame;
 
 public class Bag extends BaseActor {
-    private float originX = -1;
-    private int loot = 0;
+    private int lootValue = 0;
     private BagDragEffect effect;
     private Label warningLabel;
     private float time = 0;
@@ -20,10 +20,10 @@ public class Bag extends BaseActor {
     public float weight = .1f;
     public float draggers = 0f;
     public boolean isLoosing = false;
+    public boolean inPlay = false;
 
     public Bag(float x, float y, Stage stage) {
         super(x, y, stage);
-        originX = getX();
         loadImage("bag");
         setSize(50f, 5f);
         setOrigin(Align.bottom);
@@ -54,13 +54,15 @@ public class Bag extends BaseActor {
     @Override
     public void act(float delta) {
         super.act(delta);
+        if (!inPlay) return;
+
         if (time < 2f)
             time += delta;
-        if (time >=2) {
+        if (time >= 2) {
             if (draggers <= 0) {
                 setX(getX() + 1.5f);
                 isLoosing = true;
-            } else if (weight <= draggers && getX() >= originX) {
+            } else if (weight <= draggers && getX() >= 70) {
                 setX(getX() - .05f);
                 isLoosing = false;
             } else if (weight > draggers) {
@@ -76,18 +78,23 @@ public class Bag extends BaseActor {
         }
     }
 
-    public void addLoot(float weight, int value) {
-        BaseGame.coinLooted.play(BaseGame.soundVolume);
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        warningLabel.setVisible(false);
+    }
+
+    public void addLoot(float weight, int value, Sound sound) {
+        sound.play(BaseGame.soundVolume);
         setSize(getWidth(), getHeight() + .125f);
         this.weight += weight;
-        loot+= value;
+        lootValue += value;
         effect.scaleBy(.001f);
-
         addFloatingValueText(value);
     }
 
-    public int getLoot() {
-        return loot;
+    public int getLootValue() {
+        return lootValue;
     }
 
     private void addFloatingValueText(int value) {

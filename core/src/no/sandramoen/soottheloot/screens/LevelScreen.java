@@ -8,12 +8,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import no.sandramoen.soottheloot.actors.Bag;
+import no.sandramoen.soottheloot.actors.Trash;
 import no.sandramoen.soottheloot.actors.loot.Coin;
 import no.sandramoen.soottheloot.actors.loot.Diamond;
 import no.sandramoen.soottheloot.actors.loot.Loot;
@@ -31,12 +30,16 @@ public class LevelScreen extends BaseScreen {
     private Soot currentSoot;
     private Bag bag;
     private Array<Loot> loot;
+    private Array<Trash> trash;
     private Label lootCollectedLabel;
     private Label storyLabel;
     private Label label;
     private Label label1;
     private boolean loosingBagFlag = false;
     private boolean gameOver = false;
+    private int level = 0;
+    private BaseActor coinSpawner;
+    private BaseActor gemSpawner;
 
     @Override
     public void initialize() {
@@ -45,13 +48,14 @@ public class LevelScreen extends BaseScreen {
         BaseActor.setWorldBounds(100, 100);
         new Ground(mainstage);
         new Wall(mainstage);
-        bag = new Bag(70, -35, mainstage);
+        bag = new Bag(170, -35, mainstage); // 70
         loot = new Array();
 
         soots = new Array();
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 1; i++)
             soots.add(new Soot(80 + 2 * i, -35, mainstage));
 
+        trash = new Array();
         spawnLoot();
         uiSetup();
     }
@@ -81,8 +85,22 @@ public class LevelScreen extends BaseScreen {
         }
 
         bag.draggers = countDraggers;
-        loosingBagSounds();
-        checkGameOver();
+        if (level > 0 && bag.inPlay) {
+            loosingBagSounds();
+            checkGameOver();
+        }
+
+        for (Trash trash : trash) {
+            for (Soot soot : soots) {
+                if (trash.overlaps(soot)) {
+                    soots.removeValue(soot, true);
+                    BaseGame.sootDeathSound.play(BaseGame.soundVolume, soot.pitch, 0);
+                    soot.remove();
+                }
+            }
+        }
+
+        levelProgression();
     }
 
     @Override
@@ -170,8 +188,11 @@ public class LevelScreen extends BaseScreen {
                     Actions.scaleTo(0, 0, .2f),
                     Actions.moveTo(bag.getX() + bag.getWidth() / 8, bag.getY() + bag.getHeight() / 4, .2f)
             )));
-            bag.addLoot(loot.weight, loot.value);
-            lootCollectedLabel.setText("Loot: " + bag.getLoot());
+            if (loot.value == 1)
+                bag.addLoot(loot.weight, loot.value, BaseGame.coinLooted);
+            else
+                bag.addLoot(loot.weight, loot.value, BaseGame.gemLooted);
+            lootCollectedLabel.setText("Loot: " + bag.getLootValue());
         }
     }
 
@@ -186,15 +207,20 @@ public class LevelScreen extends BaseScreen {
                 final Loot loot = soots.get(i).getRidOfLoot();
                 final int finalJ = j;
                 loot.addAction(Actions.sequence(
-                        Actions.moveTo(
-                                soots.get(j).toX + (soots.get(i).getX() - soots.get(j).toX) / 2,
-                                soots.get(i).toY + MathUtils.random(10, 20),
-                                .3f
-                        ),
-                        Actions.moveTo(
-                                soots.get(j).toX,
-                                soots.get(j).toY,
-                                .3f
+                        Actions.parallel(
+                                Actions.sequence(
+                                        Actions.moveTo(
+                                                soots.get(j).toX + (soots.get(i).getX() - soots.get(j).toX) / 2,
+                                                soots.get(i).toY + MathUtils.random(10, 20),
+                                                .3f
+                                        ),
+                                        Actions.moveTo(
+                                                soots.get(j).toX,
+                                                soots.get(j).toY,
+                                                .3f
+                                        )
+                                ),
+                                Actions.rotateBy(MathUtils.random(-360, 360), .6f)
                         ),
                         Actions.run(new Runnable() {
                             @Override
@@ -224,6 +250,8 @@ public class LevelScreen extends BaseScreen {
     private void checkGameOver() {
         if (bag.getX() > 110 && !gameOver) {
             gameOver = true;
+            bag.inPlay = false;
+            bag.setVisible(false);
             lootCollectedLabel.clearActions();
             storyLabel.clearActions();
 
@@ -239,37 +267,15 @@ public class LevelScreen extends BaseScreen {
     }
 
     private void spawnLoot() {
-        new BaseActor(0, 0, mainstage).addAction(Actions.forever(Actions.sequence(
+        coinSpawner = new BaseActor(0, 0, mainstage);
+        coinSpawner.addAction(Actions.forever(Actions.sequence(
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        loot.add(new Coin(-80, 100, mainstage, 0, -40));
-                        loot.add(new Coin(-80, 100, mainstage, -10, -35));
-                        loot.add(new Coin(-80, 100, mainstage, -20, -30));
-                        loot.add(new Coin(-80, 100, mainstage, -30, -32));
-                        loot.add(new Coin(-80, 100, mainstage, -40, -33));
-                        loot.add(new Coin(-80, 100, mainstage, -50, -35));
                         loot.add(new Coin(-80, 100, mainstage, 0, -40));
                     }
                 }),
                 Actions.delay(4f)
-        )));
-
-        new BaseActor(0, 0, mainstage).addAction(Actions.forever(Actions.sequence(
-                Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        Vector2 randomPosition = new Vector2(MathUtils.random(-50, 30), MathUtils.random(-40, -32));
-                        int randomGem = MathUtils.random(1, 3);
-                        if (randomGem == 1)
-                            loot.add(new Diamond(-80, 100, mainstage, randomPosition.x, randomPosition.y));
-                        else if (randomGem == 2)
-                            loot.add(new Ruby(-80, 100, mainstage, randomPosition.x, randomPosition.y));
-                        else if (randomGem == 3)
-                            loot.add(new Sapphire(-80, 100, mainstage, randomPosition.x, randomPosition.y));
-                    }
-                }),
-                Actions.delay(20f)
         )));
     }
 
@@ -279,14 +285,167 @@ public class LevelScreen extends BaseScreen {
         BaseGame.levelMusic.play();
     }
 
+    private void levelProgression() {
+        if (level == 0) {
+            for (Soot soot : soots) {
+                if (soot.isCarrying() && !storyLabel.hasActions()) {
+                    storyLabel.setText("Good job!");
+                    storyLabel.addAction(Actions.sequence(
+                            Actions.fadeIn(1),
+                            Actions.delay(2),
+                            Actions.fadeOut(1),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    level++;
+                                }
+                            })
+                    ));
+                }
+            }
+        } else if (level == 1) {
+            if (soots.size == 1) {
+                soots.add(new Soot(bag.getX() + bag.getWidth() / 2, bag.getY(), mainstage));
+                soots.get(1).addAction(Actions.moveTo(90, bag.getY(), 3f));
+                bag.addAction(Actions.moveTo(70, bag.getY(), 3f));
+                BaseGame.bagDragging.play(BaseGame.soundVolume);
+
+                storyLabel.setText("Your new friend got a bag to collect loot in!");
+                storyLabel.addAction(Actions.sequence(
+                        Actions.fadeIn(1),
+                        Actions.delay(2),
+                        Actions.fadeOut(1),
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                lootCollectedLabel.addAction(Actions.fadeIn(1));
+                                bag.inPlay = true;
+                            }
+                        })
+                ));
+            }
+            if (bag.getLootValue() > 3) level++;
+        } else if (level == 2) {
+            if (soots.size == 2) {
+                storyLabel.setText("Even more friends!");
+                storyLabel.addAction(Actions.sequence(
+                        Actions.fadeIn(1),
+                        Actions.delay(2),
+                        Actions.fadeOut(1)
+                ));
+
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(2).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                soots.get(3).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+            }
+            if (bag.getLootValue() > 10) level++;
+        } else if (level == 3) {
+            if (soots.size == 4) {
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(4).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                coinSpawner.clearActions();
+                coinSpawner.addAction(Actions.forever(Actions.sequence(
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                loot.add(new Coin(-100, 100, mainstage, 0, -40));
+                                loot.add(new Coin(-120, 100, mainstage, -50, -35));
+                            }
+                        }),
+                        Actions.delay(4f)
+                )));
+            }
+            if (bag.getLootValue() > 20) level++;
+        } else if (level == 4) {
+            if (soots.size == 5) {
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(5).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(6).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+            }
+            if (bag.getLootValue() > 32) level++;
+        } else if (level == 5) {
+            if (soots.size == 7) {
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(7).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(8).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(9).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                soots.add(new Soot(170, bag.getY(), mainstage));
+                soots.get(10).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                coinSpawner.clearActions();
+                coinSpawner.addAction(Actions.forever(Actions.sequence(
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                loot.add(new Coin(-100, 100, mainstage, 0, -40));
+                                loot.add(new Coin(-120, 100, mainstage, -50, -35));
+                                loot.add(new Coin(-120, 100, mainstage, -90, -30));
+                                loot.add(new Coin(-120, 100, mainstage, -70, -35));
+                            }
+                        }),
+                        Actions.delay(4f)
+                )));
+                gemSpawner = new BaseActor(0, 0, mainstage);
+                gemSpawner.addAction(Actions.forever(Actions.sequence(
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                Vector2 randomPosition = new Vector2(MathUtils.random(-50, 30), MathUtils.random(-40, -32));
+                                int randomGem = MathUtils.random(1, 3);
+                                if (randomGem == 1)
+                                    loot.add(new Diamond(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                                else if (randomGem == 2)
+                                    loot.add(new Ruby(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                                else if (randomGem == 3)
+                                    loot.add(new Sapphire(-80, 100, mainstage, randomPosition.x, randomPosition.y));
+                            }
+                        }),
+                        Actions.delay(20f)
+                )));
+                BaseActor levelSpawner = new BaseActor(0f, 0f, mainstage);
+                levelSpawner.addAction(Actions.forever(Actions.sequence(
+                        Actions.delay(20),
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                coinSpawner.addAction(Actions.forever(Actions.sequence(
+                                        Actions.run(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                loot.add(new Coin(-100, 100, mainstage, MathUtils.random(-80, 10), MathUtils.random(-40, -32)));
+                                            }
+                                        }),
+                                        Actions.delay(4)
+                                )));
+                                if (soots.size < 50) {
+                                    soots.add(new Soot(170, bag.getY(), mainstage));
+                                    soots.get(soots.size - 1).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                                }
+                            }
+                        })
+                )));
+                new BaseActor(0, 0, mainstage).addAction(Actions.forever(Actions.sequence(
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                trash.add(new Trash(-100, 100, mainstage, MathUtils.random(-80, 10), MathUtils.random(-40, -32)));
+                                soots.add(new Soot(170, bag.getY(), mainstage));
+                                soots.get(soots.size - 1).addAction(Actions.moveTo(70 + bag.getWidth() / 2 + MathUtils.random(-20f, 5f), bag.getY() + MathUtils.random(-5f, 5f), 3f));
+                            }
+                        }),
+                        Actions.delay(60)
+                )));
+            }
+        }
+    }
+
     private void uiSetup() {
         lootCollectedLabel = new Label("Loot: 0", BaseGame.label36Style);
         lootCollectedLabel.setColor(BaseGame.lightBlue);
-        lootCollectedLabel.addAction(Actions.sequence(
-                Actions.fadeOut(0f),
-                Actions.delay(6f),
-                Actions.fadeIn(1f)
-        ));
+        lootCollectedLabel.addAction(Actions.fadeOut(0f));
         uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).row();
 
         storyLabel = new Label("Follow the overburdened Adventurer,\nand grab the loot they're dropping!", BaseGame.label36Style);

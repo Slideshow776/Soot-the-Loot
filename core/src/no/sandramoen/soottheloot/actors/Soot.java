@@ -71,6 +71,16 @@ public class Soot extends BaseActor {
         )));
         crown.setVisible(false);
         addActor(crown);
+
+        addAction(Actions.sequence(
+                Actions.delay(MathUtils.random(0f, .5f)),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        BaseGame.sootHelloSound.play(BaseGame.soundVolume, pitch, 0);
+                    }
+                })
+        ));
     }
 
     @Override

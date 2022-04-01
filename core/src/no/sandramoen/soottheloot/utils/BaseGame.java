@@ -40,6 +40,8 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
     public static Music levelMusic;
     public static Sound coinDropSound;
     public static Sound coinLooted;
+    public static Sound gemLooted;
+    public static Sound bagDragging;
     public static Sound sootChosenSound;
     public static Sound sootTossSound;
     public static Sound sootPickupSound;
@@ -50,6 +52,8 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
     public static Sound sootCheerSound;
     public static Sound sootScreamSound;
     public static Sound sootPhewSound;
+    public static Sound sootHelloSound;
+    public static Sound sootDeathSound;
 
     // game state
     public static Preferences prefs;
@@ -112,6 +116,8 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         // sound
         assetManager.load("audio/sound/349277__deleted-user-2104797__coin-on-coins-01.wav", Sound.class);
         assetManager.load("audio/sound/Pickup_Coin13.wav", Sound.class);
+        assetManager.load("audio/sound/Powerup22.wav", Sound.class);
+        assetManager.load("audio/sound/bagdrag.wav", Sound.class);
         assetManager.load("audio/sound/soots/chosen.wav", Sound.class);
         assetManager.load("audio/sound/soots/toss.wav", Sound.class);
         assetManager.load("audio/sound/soots/pickup.wav", Sound.class);
@@ -122,6 +128,8 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         assetManager.load("audio/sound/soots/cheer.wav", Sound.class);
         assetManager.load("audio/sound/soots/scream.wav", Sound.class);
         assetManager.load("audio/sound/soots/phew.wav", Sound.class);
+        assetManager.load("audio/sound/soots/hello.wav", Sound.class);
+        assetManager.load("audio/sound/soots/death.wav", Sound.class);
 
         assetManager.finishLoading();
 
@@ -131,6 +139,8 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         // sound
         coinDropSound = assetManager.get("audio/sound/349277__deleted-user-2104797__coin-on-coins-01.wav", Sound.class);
         coinLooted = assetManager.get("audio/sound/Pickup_Coin13.wav", Sound.class);
+        gemLooted = assetManager.get("audio/sound/Powerup22.wav", Sound.class);
+        bagDragging = assetManager.get("audio/sound/bagdrag.wav", Sound.class);
         sootChosenSound = assetManager.get("audio/sound/soots/chosen.wav", Sound.class);
         sootTossSound = assetManager.get("audio/sound/soots/toss.wav", Sound.class);
         sootPickupSound = assetManager.get("audio/sound/soots/pickup.wav", Sound.class);
@@ -141,6 +151,8 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
         sootCheerSound = assetManager.get("audio/sound/soots/cheer.wav", Sound.class);
         sootScreamSound = assetManager.get("audio/sound/soots/scream.wav", Sound.class);
         sootPhewSound = assetManager.get("audio/sound/soots/phew.wav", Sound.class);
+        sootHelloSound = assetManager.get("audio/sound/soots/hello.wav", Sound.class);
+        sootDeathSound = assetManager.get("audio/sound/soots/death.wav", Sound.class);
 
         textureAtlas = assetManager.get("images/included/packed/images.pack.atlas");
 

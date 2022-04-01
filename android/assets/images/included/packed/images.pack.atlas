@@ -46,6 +46,41 @@ sparkle
   orig: 32, 32
   offset: 0, 0
   index: -1
+trash0
+  rotate: false
+  xy: 133, 68
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+trash1
+  rotate: false
+  xy: 167, 102
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+trash2
+  rotate: false
+  xy: 804, 778
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+trash3
+  rotate: false
+  xy: 838, 812
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+trash4
+  rotate: false
+  xy: 888, 870
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 vignette
   rotate: false
   xy: 2, 136
@@ -62,7 +97,7 @@ wall
   index: -1
 whitePixel
   rotate: false
-  xy: 133, 99
+  xy: 922, 935
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
