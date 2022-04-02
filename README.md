@@ -1,5 +1,5 @@
 # Soot-the-Loot
-Submission to the Game Jam [Develop to Help - Ukraine](https://itch.io/jam/develop-to-help-ukraine).
+Submission to the Game Jam [Develop to Help - Ukraine](https://itch.io/jam/develop-to-help-ukraine). The theme was 'Stronger together'.
 
 You play as a group of _soots_ following a successful adventurer back out of the dungeon, collecting the loot they have that just drops to the floor.
 
