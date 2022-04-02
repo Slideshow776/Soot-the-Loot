@@ -59,7 +59,7 @@ public abstract class BaseGame extends Game implements AssetErrorListener {
     public static Preferences prefs;
     public static boolean loadPersonalParameters;
     public static float soundVolume = 1f;
-    public static float musicVolume = 0.75f;
+    public static float musicVolume = 1f;
     public static String currentLocale;
     public static I18NBundle myBundle;
 

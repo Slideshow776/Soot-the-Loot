@@ -9,21 +9,22 @@ import java.awt.Dimension;
 import no.sandramoen.soottheloot.MyGdxGame;
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+    public static void main(String[] arg) {
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
-		Dimension dimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-		config.width = (int) (dimension.width * .9f);
-		float screenRation = .461538461f;
-		config.height = (int) (config.width * screenRation);
+        Dimension dimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        config.width = (int) (dimension.width * .9f);
+        float screenRation = .461538461f;
+        config.height = (int) (config.width * screenRation);
 
-		config.vSyncEnabled = true;
-		config.useGL30 = true;
+        config.vSyncEnabled = true;
+        config.useGL30 = true;
 
-		// miscellaneous
-		config.title = "Soot the Loot";
-		config.resizable = true;
-		config.addIcon("images/excluded/desktopIcon.png", Files.FileType.Internal);
-		new LwjglApplication(new MyGdxGame(), config);
-	}
+        // miscellaneous
+        config.title = "Soot the Loot";
+        config.resizable = true;
+        config.addIcon("images/excluded/icon_32x32.png", Files.FileType.Internal);
+        config.addIcon("images/excluded/icon_16x16.png", Files.FileType.Internal);
+        new LwjglApplication(new MyGdxGame(), config);
+    }
 }

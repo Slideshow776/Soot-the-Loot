@@ -29,6 +29,7 @@ public class LevelScreen extends BaseScreen {
     private Array<Soot> soots;
     private Soot currentSoot;
     private Bag bag;
+    private BaseActor levelSpawner;
     private Array<Loot> loot;
     private Array<Trash> trash;
     private Label lootCollectedLabel;
@@ -56,6 +57,7 @@ public class LevelScreen extends BaseScreen {
             soots.add(new Soot(80 + 2 * i, -35, mainstage));
 
         trash = new Array();
+        levelSpawner = new BaseActor(0f, 0f, mainstage);
         spawnLoot();
         uiSetup();
     }
@@ -263,6 +265,7 @@ public class LevelScreen extends BaseScreen {
             for (Soot soot : soots) {
                 soot.addAction(Actions.moveTo(200, soot.getY(), 1f));
             }
+            levelSpawner.clearActions();
         }
     }
 
@@ -405,7 +408,6 @@ public class LevelScreen extends BaseScreen {
                         }),
                         Actions.delay(20f)
                 )));
-                BaseActor levelSpawner = new BaseActor(0f, 0f, mainstage);
                 levelSpawner.addAction(Actions.forever(Actions.sequence(
                         Actions.delay(20),
                         Actions.run(new Runnable() {
