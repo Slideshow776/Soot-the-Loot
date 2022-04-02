@@ -447,7 +447,7 @@ public class LevelScreen extends BaseScreen {
         lootCollectedLabel.addAction(Actions.fadeOut(0f));
         uiTable.add(lootCollectedLabel).expandY().top().padTop(Gdx.graphics.getHeight() * .01f).row();
 
-        storyLabel = new Label("Follow the overburdened Adventurer,\nand grab the loot they're dropping!", BaseGame.label36Style);
+        storyLabel = new Label("Follow the overburdened Adventurer,\nand grab the loot they're dropping!", BaseGame.label26Style);
         storyLabel.setFontScale(1.2f);
         storyLabel.setColor(BaseGame.lightBlue);
         storyLabel.addAction(Actions.sequence(
