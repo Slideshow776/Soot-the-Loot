@@ -4,6 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -168,7 +169,12 @@ public class Soot extends BaseActor {
         ));
     }
 
-    public void setSelect(boolean isSelected) {
-
+    public void moveTo(float toX, float toY) {
+        addAction(Actions.moveTo(
+                toX - getWidth() / 2,
+                toY - getHeight() / 2,
+                1f,
+                Interpolation.pow2)
+        );
     }
 }

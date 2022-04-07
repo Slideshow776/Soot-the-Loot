@@ -108,7 +108,6 @@ public class LevelScreen extends BaseScreen {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 worldCoordinates = mainstage.getCamera().unproject(new Vector3(screenX, screenY, 0f));
-        if (worldCoordinates.y > -28) worldCoordinates.set(worldCoordinates.x, -28, 0f);
 
         Soot pastSoot = currentSoot;
         for (Soot soot : soots) {
@@ -126,14 +125,10 @@ public class LevelScreen extends BaseScreen {
 
         if (currentSoot != null && pastSoot == currentSoot) {
             BaseGame.sootGoToSound.play(BaseGame.soundVolume, currentSoot.pitch, 0);
+            if (worldCoordinates.y > -28) worldCoordinates.set(worldCoordinates.x, -28, 0f);
             currentSoot.toX = worldCoordinates.x - currentSoot.getWidth() / 2;
             currentSoot.toY = worldCoordinates.y - currentSoot.getHeight() / 2;
-            currentSoot.addAction(Actions.moveTo(
-                    worldCoordinates.x - currentSoot.getWidth() / 2,
-                    worldCoordinates.y - currentSoot.getHeight() / 2,
-                    1f,
-                    Interpolation.pow2)
-            );
+            currentSoot.moveTo(worldCoordinates.x, worldCoordinates.y);
         }
         return super.touchDown(screenX, screenY, pointer, button);
     }
