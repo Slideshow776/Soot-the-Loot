@@ -8,3 +8,5 @@ You play as a group of _soots_ following a successful adventurer back out of the
 Also available [for desktop and android](https://github.com/Slideshow776/Soot-the-Loot/releases/latest)!
 ![demo](https://user-images.githubusercontent.com/4059636/161377286-4a63d7b0-a545-4129-89d1-a328a60f1f36.gif)
 Also available online [here](https://slideshow776.github.io/Soot-the-Loot/) (press 'R' to play the music).
+
+![image](https://github.com/Slideshow776/Soot-the-Loot/assets/4059636/7ad8bc52-20b3-4f84-9769-97cac7c83c14)
